@@ -1,0 +1,40 @@
+# 
+# docker-compose.yml — определяет сервисы для разработки и тестирования.
+
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    env_file: .env  # Используем переменные из .env
+    environment:
+      POSTGRES_DB: ${DB_NAME}  # Если DB_NAME не задан, будет "bank_db"
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME} -d ${DB_NAME}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  bank-app:
+    build: .  # Собираем образ из Dockerfile
+    env_file: .env
+    ports:
+      - "${SERVER_PORT}:${SERVER_PORT}"
+    depends_on:
+      postgres:
+        condition: service_healthy  # Ждем, пока Postgres станет доступен
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${DB_NAME}
+      SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRATION_MS: ${JWT_EXPIRATION_MS}
+
+volumes:
+  postgres_data:

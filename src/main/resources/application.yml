@@ -1,0 +1,26 @@
+#
+# application.yml — главный конфигурационный файл Spring Boot.
+
+spring:
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+  liquibase:
+    enabled: false
+    change-log: classpath:/db/changelog/master.yaml
+
+jwt:
+  secret: ${JWT_SECRET} # Секрет для подписи JWT
+  expiration-ms: ${JWT_EXPIRATION_MS} # 24 часа (в мс)
+
+server:
+  port: ${SERVER_PORT} # Порт приложения
+
+logging:
+  level:
+    org.springframework.security: DEBUG # Для отладки Security
