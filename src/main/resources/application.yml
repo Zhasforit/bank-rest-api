@@ -1,26 +1,53 @@
 #
 # application.yml — главный конфигурационный файл Spring Boot.
 
+server:
+  port: 8080
+
 spring:
   datasource:
-    url: ${DB_URL}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: update
     show-sql: true
-  liquibase:
-    enabled: false
-    change-log: classpath:/db/changelog/master.yaml
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
 
-jwt:
-  secret: ${JWT_SECRET} # Секрет для подписи JWT
-  expiration-ms: ${JWT_EXPIRATION_MS} # 24 часа (в мс)
-
-server:
-  port: ${SERVER_PORT} # Порт приложения
-
-logging:
-  level:
-    org.springframework.security: DEBUG # Для отладки Security
+  logging:
+    level:
+      org.hibernate.SQL: DEBUG
+      org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+app:
+  jwt:
+    secret: "yourveryextrabig256bitsecretkeyfortheapplication" # Секрет для подписи JWT
+    expirationMs: 86400000 # 24 часа (в мс)
+#spring:
+#  datasource:
+#    url: ${DB_URL}
+#    username: ${DB_USERNAME}
+#    password: ${DB_PASSWORD}
+#  jpa:
+#    hibernate:
+#      ddl-auto: validate
+#    show-sql: true
+#  liquibase:
+#    enabled: false
+#    change-log: classpath:/db/changelog/master.yaml
+#
+#jwt:
+#  secret: ${JWT_SECRET} # Секрет для подписи JWT
+#  expiration-ms: ${JWT_EXPIRATION_MS} # 24 часа (в мс)
+#
+#server:
+#  port: ${SERVER_PORT} # Порт приложения
+#
+#logging:
+#  level:
+#    org.springframework.security: DEBUG # Для отладки Security

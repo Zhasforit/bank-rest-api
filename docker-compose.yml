@@ -22,7 +22,9 @@ services:
       retries: 5
 
   bank-app:
-    build: .  # Собираем образ из Dockerfile
+    volumes:
+      - ./target:/app/target
+    build: .
     env_file: .env
     ports:
       - "${SERVER_PORT}:${SERVER_PORT}"
@@ -30,6 +32,7 @@ services:
       postgres:
         condition: service_healthy  # Ждем, пока Postgres станет доступен
     environment:
+      SPRING_DEVTOOLS_REMOTE_DEBUG: "true"
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${DB_NAME}
       SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
